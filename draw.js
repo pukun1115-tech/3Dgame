@@ -1,34 +1,51 @@
 function draw() {
+    //焦点距離を求める
     const f = 1 / Math.tan(((camera.FOV * (Math.PI / 180)) / 2));//カメラとスクリーンの距離
 }
 
-function worldToCamera(v)//ワールド座標をカメラの座標に変換
-{
-    const cosY = Math.cos(-camera.rot.y);
-    const sinY = Math.sin(-camera.rot.y);
-    const cosX = Math.cos(-camera.rot.x);
-    const sinX = Math.sin(-camera.rot.x);
-    const cosZ = Math.cos(-camera.rot.z);
-    const sinZ = Math.sin(-camera.rot.z);
+//ワールド座標をカメラの座標に変換
+function worldToCamera(v) {
+    //ラジアン?
+    const rotX = camera.rot.x * Math.PI / 180;
+    const rotY = camera.rot.y * Math.PI / 180;
+    const rotZ = camera.rot.z * Math.PI / 180;
 
-    //カメラが原点
+    //カメラと反対向きに回すからマイナス
+    const cosY = Math.cos(-rotY);
+    const sinY = Math.sin(-rotY);
+    const cosX = Math.cos(-rotX);
+    const sinX = Math.sin(-rotX);
+    const cosZ = Math.cos(-rotZ);
+    const sinZ = Math.sin(-rotZ);
+
+    //カメラが原点(カメラの座標を引く)
     const v1 = {
         x: v.x - camera.pos.x,
         y: v.y - camera.pos.y,
         z: v.z - camera.pos.z
     };
 
-    //y
-    let x1 = v1.x * cosY + v1.z * sinY;
-    let z1 = -v1.x * sinY + v1.z * cosY;
+    //y軸回転
+    const v2 = {
+        x: v1.x * cosY + v1.z * sinY,
+        y: v1.y,
+        z: v1.x * sinY + v1.z * cosY
+    };
 
-    //x
-    let y2 = v1.y * cosX - z1 * sinX;
-    let z2 = v1.y * sinX + z1 * cosX;
+    //x軸回転
+    const v3 = {
+        x: v2.x,
+        y: v2.y * cosX - v2.z * sinX,
+        z: v2.y * sinX + v2.z * cosX
+    };
 
-    //z
-    let x3 = x1 * cosZ - y2 * sinZ;
-    let y3 = x1 * sinZ + y2 * cosZ;
+    //z軸回転
+    const v4 = {
+        x: v3.x * cosZ - v3.y * sinZ,
+        y: v3.x * sinZ + v3.y * cosZ,
+        z: v3.z
+    };
 
-    return { x: x3, y: y3, z: z2 };
+    //変換後
+    return v4;
 }
