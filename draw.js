@@ -1,22 +1,18 @@
+/*                                                                                                */
 function draw() {
-    //焦点距離を求める
-    const f = 1 / Math.tan(((camera.FOV * (Math.PI / 180)) / 2));//カメラとスクリーンの距離
+    projectPoint(worldToCamera({ x: 3, y: 0, z: 6 }));
 }
 
 //ワールド座標をカメラの座標に変換
 function worldToCamera(v) {
-    //ラジアン?
-    const rotX = camera.rot.x * Math.PI / 180;
-    const rotY = camera.rot.y * Math.PI / 180;
-    const rotZ = camera.rot.z * Math.PI / 180;
+    //ラジアン
+    const rotX = degToRad(-camera.rot.x);
+    const rotY = degToRad(-camera.rot.y);
+    const rotZ = degToRad(-camera.rot.z);
 
-    //カメラと反対向きに回すからマイナス
-    const cosY = Math.cos(-rotY);
-    const sinY = Math.sin(-rotY);
-    const cosX = Math.cos(-rotX);
-    const sinX = Math.sin(-rotX);
-    const cosZ = Math.cos(-rotZ);
-    const sinZ = Math.sin(-rotZ);
+    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+    const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    const cosZ = Math.cos(rotZ), sinZ = Math.sin(rotZ);
 
     //カメラが原点(カメラの座標を引く)
     const v1 = {
@@ -29,7 +25,7 @@ function worldToCamera(v) {
     const v2 = {
         x: v1.x * cosY + v1.z * sinY,
         y: v1.y,
-        z: v1.x * sinY + v1.z * cosY
+        z: -v1.x * sinY + v1.z * cosY
     };
 
     //x軸回転
@@ -48,4 +44,19 @@ function worldToCamera(v) {
 
     //変換後
     return v4;
+}
+
+//投影処理(点)
+function projectPoint(v) {
+    //ラジアンFOV
+    const FOV = degToRad(camera.FOV)
+    //焦点距離を求める
+    const f = 1 / Math.tan((FOV / 2));//カメラとスクリーンの距離
+
+    if (v.z <= 0) return;
+
+    const x = (v.x * f) / v.z;
+    const y = (v.y * f) / v.z;
+    ctx.fillStyle = "#ff0000";
+    //ctx.fillRect()
 }

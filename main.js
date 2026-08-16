@@ -5,18 +5,29 @@ const keys = {};//キーの状態
 document.addEventListener("keydown", e => keys[e.key] = true);//キーが押された時
 document.addEventListener("keyup", e => keys[e.key] = false);//キーが押されてない時
 
+//プレイヤーの目
 const camera = {
     pos: { x: 0, y: 0, z: 0 },
+    //y:90で右を向く
+    //x:90で下を向く
+    //z:90でカメラが反時計回り
     rot: { x: 0, y: 0, z: 0 },
     FOV: 60,
     speed: 0.01
 };
 
+//キャンバスの大きさ変更
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
+//度数法からラジアンに変換
+function degToRad(d) {
+    return d * Math.PI / 180;
+}
+
+//メインループ
 function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     resize();
@@ -26,5 +37,4 @@ function mainLoop() {
 
     requestAnimationFrame(mainLoop);
 }
-resize();
 mainLoop();
