@@ -53,10 +53,9 @@ function projectPoint(v) {
     //焦点距離を求める
     const f = 1 / Math.tan((FOV / 2));//カメラとスクリーンの距離
 
-    if (v.z <= 0) return;
+    if (v.z <= f) return;
 
     const x = (v.x * f) / v.z;
     const y = (v.y * f) / v.z;
-    ctx.fillStyle = "#ff0000";
-    //ctx.fillRect()
+    return { x: (canvas.width / 2) + (canvas.width * x), y: (canvas.height / 2) + (canvas.height * y) };
 }
