@@ -5,15 +5,17 @@ const keys = {};//キーの状態
 document.addEventListener("keydown", e => keys[e.key] = true);//キーが押された時
 document.addEventListener("keyup", e => keys[e.key] = false);//キーが押されてない時
 
+const triangels = [{ verts: [{ x: 0, y: 0, z: 4 }, { x: 4, y: 0, z: 8 }, { x: 4, y: 0, z: 4 }], color: "#00ff00" }];
+
 //プレイヤーの目
 const camera = {
-    pos: { x: 0, y: 0, z: 0 },
+    pos: { x: 0, y: 5, z: 0 },
     //y:90で右を向く
     //x:90で下を向く
     //z:90でカメラが反時計回り
     rot: { x: 0, y: 0, z: 0 },
-    FOV: 60,
-    speed: 0.01
+    FOV: 120,
+    near: 0.01,
 };
 
 //キャンバスの大きさ変更
