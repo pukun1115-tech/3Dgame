@@ -1,5 +1,6 @@
 /*                                                                                                                                                  */
 function draw() {
+    /*
     ctx.fillStyle = "#ff0000"
     drawPoint({ x: 0, y: 0, z: 4 });
     drawPoint({ x: 4, y: 0, z: 4 });
@@ -9,7 +10,7 @@ function draw() {
     drawPoint({ x: 4, y: 0, z: 8 });
     drawPoint({ x: 0, y: 4, z: 8 });
     drawPoint({ x: 4, y: 4, z: 8 });
-    for (const tri of triangels) {
+    for (const tri of triangles) {
         const v1 = worldToCamera(tri.verts[0]);
         const v2 = worldToCamera(tri.verts[1]);
         const v3 = worldToCamera(tri.verts[2]);
@@ -21,6 +22,23 @@ function draw() {
             const c = projectPoint(t.verts[2]);
             if (a === null || b === null || c === null) return;
             draw2DTriangle(a, b, c, t.color);
+        }
+    }
+    */
+    for (const c of chunks) {
+        for (const tri of c.triangles) {
+            const v1 = worldToCamera(tri.verts[0]);
+            const v2 = worldToCamera(tri.verts[1]);
+            const v3 = worldToCamera(tri.verts[2]);
+
+            const cliped = clip3DTriangle(v1, v2, v3, tri.color);
+            for (const t of cliped) {
+                const a = projectPoint(t.verts[0]);
+                const b = projectPoint(t.verts[1]);
+                const c = projectPoint(t.verts[2]);
+                if (a === null || b === null || c === null) return;
+                draw2DTriangle(a, b, c, t.color);
+            }
         }
     }
 }
