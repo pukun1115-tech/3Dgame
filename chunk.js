@@ -19,9 +19,9 @@ class chunk {
 
         for (let x = 0; x < sizeX; x++) {
             for (let z = 0; z < sizeZ; z++) {
-                const dirtHeight = Math.floor(Math.random() * 2) + 5;
+                const dirtHeight = Math.floor(Math.random() * 3) + 2;
                 for (let y = 0; y < dirtHeight; y++) {
-                    map[x][y][z] = 1; //土
+                    map[x][y][z] = 1;//土
                 }
             }
         }
@@ -54,51 +54,87 @@ class chunk {
                         { x: bx + 1, y: by + 1, z: bz + 1 },
                     ];
 
-                    const color = "#ffffff";
+                    const color = "#ff0000";
+                    const color2 = "#00ff00";
+                    const color3 = "#0000ff";
 
                     // 前面
-                    if (this.isAir(x, y, z - 1)/* && camera.pos.z < bz*/) {
-                        this.triangles.push({ verts: [v[0], v[1], v[2]], color });
-                        this.triangles.push({ verts: [v[1], v[3], v[2]], color });
+                    if (this.isAir(x, y, z - 1) && camera.pos.z < bz) {
+                        this.triangles.push({ verts: [v[0], v[1], v[2]], color: color });
+                        this.triangles.push({ verts: [v[1], v[3], v[2]], color: color });
                     }
 
                     // 背面
-                    if (this.isAir(x, y, z + 1)/* && camera.pos.z > bz + 1*/) {
-                        this.triangles.push({ verts: [v[4], v[6], v[5]], color });
-                        this.triangles.push({ verts: [v[5], v[6], v[7]], color });
+                    if (this.isAir(x, y, z + 1) && camera.pos.z > bz + 1) {
+                        this.triangles.push({ verts: [v[4], v[6], v[5]], color: color });
+                        this.triangles.push({ verts: [v[5], v[6], v[7]], color: color });
                     }
 
                     // 左
-                    if (this.isAir(x - 1, y, z)/* && camera.pos.x < bx*/) {
-                        this.triangles.push({ verts: [v[0], v[2], v[4]], color });
-                        this.triangles.push({ verts: [v[2], v[6], v[4]], color });
+                    if (this.isAir(x - 1, y, z) && camera.pos.x < bx) {
+                        this.triangles.push({ verts: [v[0], v[2], v[4]], color: color3 });
+                        this.triangles.push({ verts: [v[2], v[6], v[4]], color: color3 });
                     }
 
                     // 右
-                    if (this.isAir(x + 1, y, z)/* && camera.pos.x > bx + 1*/) {
-                        this.triangles.push({ verts: [v[1], v[5], v[3]], color });
-                        this.triangles.push({ verts: [v[3], v[5], v[7]], color });
+                    if (this.isAir(x + 1, y, z) && camera.pos.x > bx + 1) {
+                        this.triangles.push({ verts: [v[1], v[5], v[3]], color: color3 });
+                        this.triangles.push({ verts: [v[3], v[5], v[7]], color: color3 });
                     }
 
                     //上
-                    if (this.isAir(x, y + 1, z)/* && camera.pos.y > by + 1*/) {
-                        this.triangles.push({ verts: [v[2], v[3], v[6]], color });
-                        this.triangles.push({ verts: [v[3], v[7], v[6]], color });
+                    if (this.isAir(x, y + 1, z) && camera.pos.y > by + 1) {
+                        this.triangles.push({ verts: [v[2], v[3], v[6]], color: color2 });
+                        this.triangles.push({ verts: [v[3], v[7], v[6]], color: color2 });
                     }
 
                     //下
-                    if (this.isAir(x, y - 1, z)/* && camera.pos.y < by*/) {
-                        this.triangles.push({ verts: [v[0], v[4], v[1]], color });
-                        this.triangles.push({ verts: [v[1], v[4], v[5]], color });
+                    if (this.isAir(x, y - 1, z) && camera.pos.y < by) {
+                        this.triangles.push({ verts: [v[0], v[4], v[1]], color: color2 });
+                        this.triangles.push({ verts: [v[1], v[4], v[5]], color: color2 });
                     }
                 }
             }
         }
+
+        this.sortTriangles();
+    }
+
+    // 三角形を重心とカメラの距離でソートする
+    sortTriangles() {
+        this.triangles.sort((a, b) => {
+            // 三角形の重心を計算
+            const ac = {
+                x: (a.verts[0].x + a.verts[1].x + a.verts[2].x) / 3,
+                y: (a.verts[0].y + a.verts[1].y + a.verts[2].y) / 3,
+                z: (a.verts[0].z + a.verts[1].z + a.verts[2].z) / 3,
+            };
+            const bc = {
+                x: (b.verts[0].x + b.verts[1].x + b.verts[2].x) / 3,
+                y: (b.verts[0].y + b.verts[1].y + b.verts[2].y) / 3,
+                z: (b.verts[0].z + b.verts[1].z + b.verts[2].z) / 3,
+            };
+
+            //カメラからの距離(**は2乗)(三平方の定理)
+            const ad = (
+                (ac.x - camera.pos.x) ** 2 +
+                (ac.y - camera.pos.y) ** 2 +
+                (ac.z - camera.pos.z) ** 2
+            );
+
+            const bd = (
+                (bc.x - camera.pos.x) ** 2 +
+                (bc.y - camera.pos.y) ** 2 +
+                (bc.z - camera.pos.z) ** 2
+            );
+
+            return bd - ad;//bd > adの時正の値を返す => bdが前に来る
+        });
     }
 
     isAir(x, y, z) {
         if (x < 0 || y < 0 || z < 0 || x >= chunkX || y >= chunkY || z >= chunkZ) {
-            return true; // チャンク外は空気扱い
+            return true;//チャンク外は空気扱い
         }
         return (this.map[x][y][z] === 0);
     }

@@ -18,13 +18,13 @@ const camera = {
     //z:90でカメラが反時計回り
     rot: { x: 0, y: 0, z: 0 },
     FOV: 120,
-    near: 0.01,
+    near: 0.05,
 };
 
 chunks.push(new chunk(0, 0));
-chunks.push(new chunk(1, 0));
-chunks.push(new chunk(0, 1));
-chunks.push(new chunk(1, 1));
+//chunks.push(new chunk(1, 0));
+//chunks.push(new chunk(0, 1));
+//chunks.push(new chunk(1, 1));
 
 //キャンバスの大きさ変更
 function resize() {
@@ -37,24 +37,20 @@ function degToRad(d) {
     return d * Math.PI / 180;
 }
 
-function updateChunks() {
-    for (const c of chunks) {
-        c.generateTriangles();
-    }
-}
-
 //メインループ
 function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     resize();
 
-    //updateChunks();
+    //いまはループの中にないと困る
+    for (const c of chunks) {
+        c.generateTriangles();
+    };
 
-    move();
-    draw();
+    playerMove();
+    chunkDraw();
 
     requestAnimationFrame(mainLoop);
 }
 
-updateChunks();
 mainLoop();
