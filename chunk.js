@@ -117,15 +117,15 @@ class chunk {
 
             //カメラからの距離(**は2乗)(三平方の定理)
             const ad = (
-                (ac.x - camera.pos.x) ** 2 +
-                (ac.y - camera.pos.y) ** 2 +
-                (ac.z - camera.pos.z) ** 2
+                Math.abs(ac.x - camera.pos.x) +
+                Math.abs(ac.y - camera.pos.y) +
+                Math.abs(ac.z - camera.pos.z)
             );
 
             const bd = (
-                (bc.x - camera.pos.x) ** 2 +
-                (bc.y - camera.pos.y) ** 2 +
-                (bc.z - camera.pos.z) ** 2
+                Math.abs(bc.x - camera.pos.x) +
+                Math.abs(bc.y - camera.pos.y) +
+                Math.abs(bc.z - camera.pos.z)
             );
 
             return bd - ad;//bd > adの時正の値を返す => bdが前に来る

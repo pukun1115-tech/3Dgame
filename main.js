@@ -42,13 +42,13 @@ function sortChunks() {
     chunks.sort((a, b) => {
         //カメラからの距離(**は2乗)(三平方の定理)(a or b distance)
         const ad = (
-            ((a.x * chunkX + (chunkX) / 2) - camera.pos.x) ** 2 +
-            ((a.z * chunkZ + (chunkZ) / 2) - camera.pos.z) ** 2
+            Math.abs((a.x * chunkX + (chunkX) / 2) - camera.pos.x) +
+            Math.abs((a.z * chunkZ + (chunkZ) / 2) - camera.pos.z)
         );
 
         const bd = (
-            ((b.x * chunkX + (chunkX) / 2) - camera.pos.x) ** 2 +
-            ((b.z * chunkZ + (chunkZ) / 2) - camera.pos.z) ** 2
+            Math.abs((b.x * chunkX + (chunkX) / 2) - camera.pos.x) +
+            Math.abs((b.z * chunkZ + (chunkZ) / 2) - camera.pos.z)
         );
 
         return bd - ad;//bd > adの時正の値を返す => bdが前に来る
