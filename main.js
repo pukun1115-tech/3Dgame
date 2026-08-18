@@ -12,19 +12,20 @@ const chunkX = 16, chunkZ = 16, chunkY = 32;
 
 //プレイヤーの目
 const camera = {
-    pos: { x: 0, y: 5, z: 0 },
+    pos: { x: 0, y: 10, z: 0 },
     //y:90で右を向く
     //x:90で下を向く
     //z:90でカメラが反時計回り
-    rot: { x: 0, y: 0, z: 0 },
-    FOV: 120,
+    rot: { x: 45, y: 45, z: 0 },
+    FOV: 90,
     near: 0.05,
 };
 
-chunks.push(new chunk(0, 0));
-//chunks.push(new chunk(1, 0));
-//chunks.push(new chunk(0, 1));
-//chunks.push(new chunk(1, 1));
+for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+        chunks.push(new chunk(i, j));
+    }
+}
 
 //キャンバスの大きさ変更
 function resize() {
@@ -37,6 +38,23 @@ function degToRad(d) {
     return d * Math.PI / 180;
 }
 
+function sortChunks() {
+    chunks.sort((a, b) => {
+        //カメラからの距離(**は2乗)(三平方の定理)(a or b distance)
+        const ad = (
+            ((a.x * chunkX + (chunkX) / 2) - camera.pos.x) ** 2 +
+            ((a.z * chunkZ + (chunkZ) / 2) - camera.pos.z) ** 2
+        );
+
+        const bd = (
+            ((b.x * chunkX + (chunkX) / 2) - camera.pos.x) ** 2 +
+            ((b.z * chunkZ + (chunkZ) / 2) - camera.pos.z) ** 2
+        );
+
+        return bd - ad;//bd > adの時正の値を返す => bdが前に来る
+    });
+}
+
 //メインループ
 function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -46,6 +64,8 @@ function mainLoop() {
     for (const c of chunks) {
         c.generateTriangles();
     };
+
+    sortChunks();
 
     playerMove();
     chunkDraw();
