@@ -3,7 +3,7 @@ class chunk {
         this.x = x;
         this.z = z;
 
-        this.map = this.createMap(chunkX, chunkY, chunkZ);
+        this.map = this.createMap(data.chunk.x, data.chunk.y, data.chunk.z);
 
         this.triangles = [];
     }
@@ -32,15 +32,15 @@ class chunk {
     generateTriangles() {
         this.triangles = [];
 
-        for (let x = 0; x < chunkX; x++) {
-            for (let y = 0; y < chunkY; y++) {
-                for (let z = 0; z < chunkZ; z++) {
+        for (let x = 0; x < data.chunk.x; x++) {
+            for (let y = 0; y < data.chunk.y; y++) {
+                for (let z = 0; z < data.chunk.z; z++) {
                     const block = this.map[x][y][z];
                     if (block === 0) continue;
 
-                    const bx = this.x * chunkX + x;//blockX
+                    const bx = this.x * data.chunk.x + x;//blockX
                     const by = y;
-                    const bz = this.z * chunkZ + z;
+                    const bz = this.z * data.chunk.z + z;
 
                     //8頂点
                     const v = [
@@ -133,7 +133,7 @@ class chunk {
     }
 
     isAir(x, y, z) {
-        if (x < 0 || y < 0 || z < 0 || x >= chunkX || y >= chunkY || z >= chunkZ) {
+        if (x < 0 || y < 0 || z < 0 || x >= data.chunk.x || y >= data.chunk.y || z >= data.chunk.z) {
             return true;//チャンク外は空気扱い
         }
         return (this.map[x][y][z] === 0);
